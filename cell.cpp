@@ -18,7 +18,7 @@ Cell::Cell(int r, int c, Board *parent)
 
 QRectF Cell::boundingRect() const
 {
-    return QRectF(tag::topleft(index(), side()), QSizeF(side(), side()));
+    return QRectF(pyatnashki::topleft(index(), section(), board()->row_count(), board()->column_count()), QSizeF(section(), section()));
 }
 
 void Cell::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
@@ -40,18 +40,18 @@ int Cell::column() const noexcept
 
 int Cell::index() const noexcept
 {
-    return row() * 4 + column();
+    return row() * board()->column_count() + column() + 1;
 }
 
-int Cell::side() const noexcept
+int Cell::section() const noexcept
 {
-    return m_side;
+    return m_section;
 }
 
 bool Cell::is_movable() const noexcept
 {
-    const int r = m_board->row_empty();
-    const int c = m_board->col_empty();
+    const int r = 1; // TODO
+    const int c = 1;
     if ((row() == r - 1 && column() == c) ||
         (row() == r + 1 && column() == c) ||
         (row() == r && column() == c - 1) ||
@@ -75,11 +75,11 @@ void Cell::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsObject::mouseReleaseEvent(event);
 }
 
-void Cell::set_side(int s) noexcept
+void Cell::set_section(int s) noexcept
 {
     if (s <= 0)
         return;
 
     prepareGeometryChange();
-    m_side = s;
+    m_section = s;
 }

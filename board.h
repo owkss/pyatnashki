@@ -11,38 +11,35 @@ class Board : public QGraphicsObject
 public:
     enum { Type = UserType + 1 };
 
-    Board(QGraphicsItem *parent = nullptr);
+    Board(int r = 4, int c = 4, QGraphicsItem *parent = nullptr);
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     int type() const override { return Type; }
 
-    int side() const noexcept;
+    int width() const noexcept;
+    int height() const noexcept;
     int section() const noexcept;
 
-    int row_empty() const noexcept { return m_row_empty; }
-    int col_empty() const noexcept { return m_col_empty; }
+    int row_count() const noexcept    { return m_rows; }
+    int column_count() const noexcept { return m_columns; }
 
 public slots:
 
 private slots:
-    void selection_changed(int r, int c);
-    void cell_clicked(int r, int c);
-    void set_side(int s) noexcept;
+    void recalc_size(const QSize &sz) noexcept;
 
 private:
     friend class Field;
 
-    Cell* m_static_cells[4][4];
-    QVector<DynamicCell*> m_cells;
+    void generate();
 
-    int m_row_empty = 3; // Строка пустой ячейки
-    int m_col_empty = 3; // Столбец пустой ячейки
+    QVector<QVector<Cell*>> m_static_cells;
 
-    int m_row_select = -1; // Строка выделенной ячейки
-    int m_col_select = -1; // Столбец выделенной ячейки
+    int m_rows = 4;
+    int m_columns = 4;
 
-    int m_side = 480;
+    int m_section = 480;
 };
 
 #endif // BOARD_H

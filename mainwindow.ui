@@ -29,8 +29,20 @@
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="game_menu">
+    <property name="title">
+     <string>Игра</string>
+    </property>
+    <addaction name="new_game_action"/>
+   </widget>
+   <addaction name="game_menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="new_game_action">
+   <property name="text">
+    <string>Новая игра</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

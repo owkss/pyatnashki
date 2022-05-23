@@ -16,10 +16,12 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     int type() const override { return Type; }
 
+    Board *board() const noexcept { return m_board; }
+
     int row() const noexcept;
     int column() const noexcept;
     int index() const noexcept;
-    int side() const noexcept;
+    int section() const noexcept;
 
     bool is_movable() const noexcept;
 
@@ -33,7 +35,7 @@ protected:
 public slots:
 
 private slots:
-    void set_side(int s) noexcept;
+    void set_section(int s) noexcept;
 
 private:
     friend class Board;
@@ -41,7 +43,7 @@ private:
     const int m_row;
     const int m_col;
 
-    int m_side = 100;
+    int m_section = 100;
 
 signals:
 

@@ -13,6 +13,11 @@ public:
     explicit Field(QWidget *parent = nullptr);
     ~Field() override;
 
+    Board *board() const { return m_board; }
+
+public slots:
+    void generate_board(int r, int c);
+
 protected:
     void keyPressEvent(QKeyEvent *event) override;
     void resizeEvent(QResizeEvent * event) override;
@@ -33,6 +38,8 @@ protected:
     void scrollContentsBy(int dx, int dy) override;
 
 private:
+    void configure_board_size();
+
     QGraphicsScene *m_scene = nullptr;
     Board *m_board = nullptr;
 

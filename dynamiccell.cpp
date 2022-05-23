@@ -19,18 +19,6 @@ void DynamicCell::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWi
 {
     painter->save();
     painter->fillRect(boundingRect(), Qt::red);
-
-    if (isSelected())
-    {
-        QPen pen = painter->pen();
-        pen.setWidth(2);
-        pen.setStyle(Qt::DotLine);
-        pen.setColor(Qt::yellow);
-        painter->setPen(pen);
-
-        painter->drawRect(boundingRect());
-    }
-
     painter->restore();
 }
 

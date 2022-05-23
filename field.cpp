@@ -20,13 +20,23 @@ Field::Field(QWidget *parent)
     setOptimizationFlags(QGraphicsView::DontSavePainterState);
 
     m_board = new Board;
-    QObject::connect(this, &Field::side_changed, m_board, &Board::set_side);
     m_scene->addItem(m_board);
 }
 
 Field::~Field()
 {
 
+}
+
+void Field::generate_board(int r, int c)
+{
+    m_scene->removeItem(m_board);
+    delete m_board;
+
+    m_board = new Board(r, c);
+    m_scene->addItem(m_board);
+
+    configure_board_size();
 }
 
 void Field::keyPressEvent(QKeyEvent *event)
@@ -37,12 +47,9 @@ void Field::keyPressEvent(QKeyEvent *event)
 void Field::resizeEvent(QResizeEvent *event)
 {
     QGraphicsView::resizeEvent(event);
-    m_scene->setSceneRect(QRectF(QPointF(0, 0), event->size()));
-    emit side_changed(std::min(event->size().width() - tag::MARGIN, event->size().height() - tag::MARGIN));
+    m_scene->setSceneRect(QRectF(QPointF(0, 0), viewport()->size()));
 
-    const double x = (viewport()->width() - m_board->boundingRect().width()) / 2;
-    const double y = (viewport()->height() - m_board->boundingRect().height()) / 2;
-    m_board->setPos(x, y);
+    configure_board_size();
 }
 
 void Field::contextMenuEvent(QContextMenuEvent *event)
@@ -105,4 +112,12 @@ void Field::drawForeground(QPainter *painter, const QRectF &rect)
 void Field::scrollContentsBy(int dx, int dy)
 {
     QGraphicsView::scrollContentsBy(dx, dy);
+}
+
+void Field::configure_board_size()
+{
+    m_board->recalc_size(viewport()->size());
+    double x = (viewport()->width() + pyatnashki::MARGIN - m_board->boundingRect().width()) / 2;
+    double y = (viewport()->height() + pyatnashki::MARGIN - m_board->boundingRect().height()) / 2;
+    m_board->setPos(x, y);
 }

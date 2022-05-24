@@ -10,11 +10,15 @@ class DynamicCell : public Cell
 public:
     enum { Type = UserType + 2 };
 
-    DynamicCell(int r, int c, Board *parent = nullptr);
+    DynamicCell(const int r, const int c, int current_row, int current_col, Board *parent);
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     int type() const override { return Type; }
+
+    int current_row() const noexcept;
+    int current_column() const noexcept;
+    int current_index() const noexcept;
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -25,11 +29,16 @@ protected:
 public slots:
 
 private slots:
+    void set_new_position(int r, int c);
 
 private:
+    friend class Board;
+
+    int m_current_row;
+    int m_current_col;
 
 signals:
-    void selection_changed(int r, int c);
+    void cell_clicked(DynamicCell *dc);
 };
 
 #endif // DYNAMICCELL_H

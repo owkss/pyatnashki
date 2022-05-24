@@ -24,3 +24,14 @@ int pyatnashki::gcd(int a, int b)
         return ::abs(a);
     return gcd(b, a % b);
 }
+
+QPointF pyatnashki::topleft(int r, int c, int side)
+{
+    return QPointF(side * c + MARGIN * c, side * r + MARGIN * r);
+}
+
+void pyatnashki::position(int &c, int &r, const int index, const int columns)
+{
+    r = (index % columns == 0) ? index / columns - 1 : index / columns;
+    c = index - r * columns - 1;
+}

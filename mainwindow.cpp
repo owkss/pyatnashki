@@ -43,11 +43,11 @@ void MainWindow::new_game_action_triggered()
     QFormLayout *fl = new QFormLayout;
 
     QSpinBox *row_spin = new QSpinBox(&d);
-    row_spin->setRange(1, 100);
+    row_spin->setRange(3, 100);
     row_spin->setValue(m_field->board()->row_count());
 
     QSpinBox *col_spin = new QSpinBox(&d);
-    col_spin->setRange(1, 100);
+    col_spin->setRange(3, 100);
     col_spin->setValue(m_field->board()->column_count());
 
     fl->addRow(tr("Строки"), row_spin);

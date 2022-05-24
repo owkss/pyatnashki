@@ -5,9 +5,8 @@
 #include <QDebug>
 #include <QPainter>
 
-Cell::Cell(int r, int c, Board *parent)
+Cell::Cell(const int r, const int c, Board *parent)
     : QGraphicsObject(parent)
-    , m_board(parent)
     , m_row(r)
     , m_col(c)
 {
@@ -28,6 +27,11 @@ void Cell::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
     painter->restore();
 }
 
+Board *Cell::board() const noexcept
+{
+    return qgraphicsitem_cast<Board*>(parentItem());
+}
+
 int Cell::row() const noexcept
 {
     return m_row;
@@ -46,18 +50,6 @@ int Cell::index() const noexcept
 int Cell::section() const noexcept
 {
     return m_section;
-}
-
-bool Cell::is_movable() const noexcept
-{
-    const int r = 1; // TODO
-    const int c = 1;
-    if ((row() == r - 1 && column() == c) ||
-        (row() == r + 1 && column() == c) ||
-        (row() == r && column() == c - 1) ||
-        (row() == r && column() == c + 1))
-        return true;
-    return false;
 }
 
 void Cell::mousePressEvent(QGraphicsSceneMouseEvent *event)

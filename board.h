@@ -28,18 +28,28 @@ public slots:
 
 private slots:
     void recalc_size(const QSize &sz) noexcept;
+    void cell_clicked(DynamicCell *dc);
 
 private:
     friend class Field;
 
     void generate();
+    bool valid_move(int r, int c);
+    void check_win();
 
-    QVector<QVector<Cell*>> m_static_cells;
+    QVector<Cell*> m_static_cells;
+    QVector<DynamicCell*> m_dynamic_cells;
 
     int m_rows = 4;
     int m_columns = 4;
 
+    int m_row_empty = 0;
+    int m_column_empty = 0;
+
     int m_section = 480;
+
+signals:
+    void win();
 };
 
 #endif // BOARD_H

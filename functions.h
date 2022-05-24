@@ -11,6 +11,8 @@ namespace pyatnashki
     };
 
     QPointF topleft(int index, int side, const int rows, const int columns);
+    QPointF topleft(int r, int c, int side);
+    void position(int &c, int &r, const int index, const int columns);
     int gcd(int a, int b);
 }
 

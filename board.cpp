@@ -1,6 +1,6 @@
 #include "board.h"
 #include "functions.h"
-#include "dynamiccell.h"
+#include "cell.h"
 #include "cell.h"
 
 #include <cmath>
@@ -76,7 +76,7 @@ void Board::recalc_size(const QSize &sz) noexcept
     emit set_section(section());
 }
 
-void Board::cell_clicked(DynamicCell *dc)
+void Board::cell_clicked(Cell *dc)
 {
     if (!valid_move(dc->current_row(), dc->current_column()))
         return;
@@ -96,17 +96,11 @@ void Board::cell_clicked(DynamicCell *dc)
 
 void Board::generate(const QList<QImage> &images)
 {
-    assert(images.size() == count() * count());
-    m_static_cells.resize(count() * count());
-
-    for (int i = 0; i < count(); ++i)
+    bool valid_images = true;
+    if (images.size() != count() * count())
     {
-        for (int j = 0; j < count(); ++j)
-        {
-            Cell *c = new Cell(i, j, this);
-            QObject::connect(this, &Board::set_section, c, &Cell::set_section);
-            m_static_cells.push_back(c);
-        }
+        valid_images = false;
+        std::cerr << "generate(): images.size() != count() * count()" << std::endl;
     }
 
     std::random_device rd;
@@ -126,11 +120,11 @@ void Board::generate(const QList<QImage> &images)
         int real_col = 0;
         pyatnashki::position(real_row, real_col, static_cast<int>(i + 1), count());
 
-        DynamicCell *dc = new DynamicCell(images.at(i), real_row, real_col, current_row, current_col, this);
+        Cell *dc = new Cell(valid_images ? images.at(i) : QImage(), real_row, real_col, current_row, current_col, this);
 
-        QObject::connect(this, &Board::set_section, dc, &DynamicCell::set_section);
-        QObject::connect(dc, &DynamicCell::cell_clicked, this, &Board::cell_clicked);
-        m_dynamic_cells.push_back(dc);
+        QObject::connect(this, &Board::set_section, dc, &Cell::set_section);
+        QObject::connect(dc, &Cell::cell_clicked, this, &Board::cell_clicked);
+        m_cells.push_back(dc);
     }
 
     pyatnashki::position(current_row, current_col, indexes.back(), count());
@@ -150,9 +144,9 @@ bool Board::valid_move(int r, int c)
 
 void Board::check_win()
 {
-    for (int i = 0; i < m_dynamic_cells.size(); ++i)
+    for (int i = 0; i < m_cells.size(); ++i)
     {
-        DynamicCell *dc = m_dynamic_cells.at(i);
+        Cell *dc = m_cells.at(i);
         if (dc->row() != dc->current_row() || dc->column() != dc->current_column())
             return;
     }

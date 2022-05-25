@@ -22,7 +22,6 @@ SOURCES += \
     application.cpp \
     board.cpp \
     cell.cpp \
-    dynamiccell.cpp \
     field.cpp \
     functions.cpp \
     main.cpp \
@@ -32,7 +31,6 @@ HEADERS += \
     application.h \
     board.h \
     cell.h \
-    dynamiccell.h \
     field.h \
     functions.h \
     mainwindow.h

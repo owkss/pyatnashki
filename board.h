@@ -6,7 +6,6 @@
 class Cell;
 class QMovie;
 class QImage;
-class DynamicCell;
 class Board : public QGraphicsObject
 {
     Q_OBJECT
@@ -28,7 +27,7 @@ public slots:
 
 private slots:
     void recalc_size(const QSize &sz) noexcept;
-    void cell_clicked(DynamicCell *dc);
+    void cell_clicked(Cell *dc);
 
 private:
     friend class Field;
@@ -37,8 +36,7 @@ private:
     bool valid_move(int r, int c);
     void check_win();
 
-    QVector<Cell*> m_static_cells;
-    QVector<DynamicCell*> m_dynamic_cells;
+    QVector<Cell*> m_cells;
 
     int m_count = 4;
 

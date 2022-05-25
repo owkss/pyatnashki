@@ -10,6 +10,7 @@
 
 Field::Field(QWidget *parent)
     : QGraphicsView(parent)
+    , m_background_color(Qt::white)
 {
     setObjectName("field");
 
@@ -24,6 +25,12 @@ Field::Field(QWidget *parent)
 Field::~Field()
 {
 
+}
+
+void Field::set_background_color(const QColor &color)
+{
+    m_background_color = color;
+    resetCachedContent();
 }
 
 void Field::generate_board(int count, const QImage &img)
@@ -106,7 +113,7 @@ void Field::wheelEvent(QWheelEvent *event)
 void Field::drawBackground(QPainter *painter, const QRectF &rect)
 {
     painter->save();
-    painter->fillRect(rect, Qt::white);
+    painter->fillRect(rect, m_background_color);
     painter->restore();
 }
 

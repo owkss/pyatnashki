@@ -37,7 +37,14 @@
     <addaction name="separator"/>
     <addaction name="quit_action"/>
    </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Вид</string>
+    </property>
+    <addaction name="background_color_action"/>
+   </widget>
    <addaction name="game_menu"/>
+   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="new_game_action">
@@ -48,6 +55,11 @@
   <action name="quit_action">
    <property name="text">
     <string>Выход</string>
+   </property>
+  </action>
+  <action name="background_color_action">
+   <property name="text">
+    <string>Цвет фона</string>
    </property>
   </action>
  </widget>

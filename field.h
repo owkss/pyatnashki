@@ -16,8 +16,10 @@ public:
     ~Field() override;
 
     Board *board() const { return m_board; }
+    QColor background_color() const noexcept { return m_background_color; }
 
 public slots:
+    void set_background_color(const QColor &color);
     void generate_board(int count, const QImage &img);
 
 protected:
@@ -44,6 +46,7 @@ private:
 
     QGraphicsScene *m_scene = nullptr;
     Board *m_board = nullptr;
+    QColor m_background_color;
 
 signals:
     void side_changed(int s);

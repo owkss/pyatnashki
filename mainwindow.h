@@ -19,6 +19,8 @@ public slots:
 private slots:
     void new_game_action_triggered();
     void quit_action_triggered();
+    void background_color_action_triggered();
+
     void step_has_been_taken();
     void win();
 

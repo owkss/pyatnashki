@@ -17,6 +17,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QColorDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,8 +32,10 @@ MainWindow::MainWindow(QWidget *parent)
     QObject::connect(this, &MainWindow::generate_board, m_field, &Field::generate_board);
     QObject::connect(m_field, &Field::step_has_been_taken, this, &MainWindow::step_has_been_taken);
     QObject::connect(m_field, &Field::win, this, &MainWindow::win);
+
     QObject::connect(ui->new_game_action, &QAction::triggered, this, &MainWindow::new_game_action_triggered);
     QObject::connect(ui->quit_action, &QAction::triggered, this, &MainWindow::quit_action_triggered);
+    QObject::connect(ui->background_color_action, &QAction::triggered, this, &MainWindow::background_color_action_triggered);
 }
 
 MainWindow::~MainWindow()
@@ -109,6 +112,12 @@ void MainWindow::new_game_action_triggered()
 void MainWindow::quit_action_triggered()
 {
     close();
+}
+
+void MainWindow::background_color_action_triggered()
+{
+    QColor c = QColorDialog::getColor(m_field->background_color(), this, tr("Цвет заливки"));
+    m_field->set_background_color(c);
 }
 
 void MainWindow::step_has_been_taken()

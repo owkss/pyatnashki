@@ -12,6 +12,7 @@ public:
     enum { Type = UserType + 2 };
 
     Cell(const int r, const int c, Board *parent);
+    ~Cell() override;
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

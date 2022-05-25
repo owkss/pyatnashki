@@ -9,6 +9,7 @@
 #include <iostream>
 
 #include <QDebug>
+#include <QMovie>
 #include <QPainter>
 
 Board::Board(const QList<QImage> &images, int r, int c, QGraphicsItem *parent)
@@ -33,15 +34,22 @@ void Board::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
 {
     painter->save();
 
-    QPen pen = painter->pen();
-    pen.setWidth(pyatnashki::MARGIN / 2);
-    pen.setColor(Qt::black);
-    painter->setPen(pen);
-
-    const int count = row_count() * row_count();
-    for(int i = 0; i < count; ++i)
+    if (game_over && movie)
     {
-        painter->drawRect(QRectF(pyatnashki::topleft(i + 1, section(), row_count(), row_count()), QSizeF(section(), section())));
+        painter->drawImage(boundingRect(), movie->currentImage());
+    }
+    else
+    {
+        QPen pen = painter->pen();
+        pen.setWidth(pyatnashki::MARGIN / 2);
+        pen.setColor(Qt::black);
+        painter->setPen(pen);
+
+        const int count = row_count() * row_count();
+        for(int i = 0; i < count; ++i)
+        {
+            painter->drawRect(QRectF(pyatnashki::topleft(i + 1, section(), row_count(), row_count()), QSizeF(section(), section())));
+        }
     }
 
     painter->restore();
@@ -85,6 +93,8 @@ void Board::cell_clicked(DynamicCell *dc)
     m_row_empty = r_tmp;
     m_column_empty = c_tmp;
 
+    emit step_has_been_taken();
+
     update();
     check_win();
 }
@@ -119,9 +129,10 @@ void Board::generate(const QList<QImage> &images)
 
         int real_row = 0;
         int real_col = 0;
-        pyatnashki::position(real_row, real_col, static_cast<int>(i), column_count());
+        pyatnashki::position(real_row, real_col, static_cast<int>(i + 1), column_count());
 
         DynamicCell *dc = new DynamicCell(images.at(i), real_row, real_col, current_row, current_col, this);
+
         QObject::connect(this, &Board::set_section, dc, &DynamicCell::set_section);
         QObject::connect(dc, &DynamicCell::cell_clicked, this, &Board::cell_clicked);
         m_dynamic_cells.push_back(dc);
@@ -150,6 +161,26 @@ void Board::check_win()
         if (dc->row() != dc->current_row() || dc->column() != dc->current_column())
             return;
     }
+
+    game_over = true;
+
+    if (movie)
+    {
+        movie->stop();
+        delete movie;
+        movie = nullptr;
+    }
+
+    QList<QGraphicsItem*> children = childItems();
+    for (int i = 0; i < children.size(); ++i) children.at(i)->setVisible(false);
+
+    movie = new QMovie(this);
+    movie->setFileName(":/files/rick-roll.gif");
+    movie->setScaledSize(boundingRect().size().toSize());
+    QObject::connect(movie, &QMovie::frameChanged, [this](int frame) { current_frame = frame; update(); });
+    movie->start();
+
+    update();
 
     emit win();
 }

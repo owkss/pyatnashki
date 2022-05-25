@@ -47,6 +47,8 @@ private:
 
 signals:
     void side_changed(int s);
+    void step_has_been_taken();
+    void win();
 };
 
 #endif // FIELD_H

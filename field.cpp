@@ -28,10 +28,18 @@ Field::~Field()
 
 void Field::generate_board(int r, int c, const QImage &img)
 {
-    m_scene->removeItem(m_board);
-    delete m_board;
+    if (m_board)
+    {
+        m_scene->removeItem(m_board);
+        delete m_board;
+        m_board = nullptr;
+    }
 
-    m_board = new Board(pyatnashki::split(img, r, c), r, c);
+    QList<QImage> images = pyatnashki::split(img, r, c);
+
+    m_board = new Board(images, r, c);
+    QObject::connect(m_board, &Board::win, this, &Field::win);
+    QObject::connect(m_board, &Board::step_has_been_taken, this, &Field::step_has_been_taken);
     m_scene->addItem(m_board);
 
     configure_board_size();
@@ -114,6 +122,9 @@ void Field::scrollContentsBy(int dx, int dy)
 
 void Field::configure_board_size()
 {
+    if (!m_board)
+        return;
+
     m_board->recalc_size(viewport()->size());
     double x = (viewport()->width() + pyatnashki::MARGIN - m_board->boundingRect().width()) / 2;
     double y = (viewport()->height() + pyatnashki::MARGIN - m_board->boundingRect().height()) / 2;

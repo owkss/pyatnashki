@@ -4,6 +4,7 @@
 #include <QGraphicsObject>
 
 class Cell;
+class QMovie;
 class QImage;
 class DynamicCell;
 class Board : public QGraphicsObject
@@ -49,8 +50,13 @@ private:
 
     int m_section = 480;
 
+    int current_frame = 0;
+    QMovie *movie = nullptr;
+    bool game_over = false;
+
 signals:
     void set_section(int s);
+    void step_has_been_taken();
     void win();
 };
 

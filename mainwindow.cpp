@@ -1,17 +1,22 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+
 #include "board.h"
 #include "field.h"
+#include "application.h"
 
+#include <QFile>
 #include <QDebug>
 #include <QLabel>
 #include <QDialog>
 #include <QSpinBox>
+#include <QLineEdit>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,7 +29,10 @@ MainWindow::MainWindow(QWidget *parent)
     setCentralWidget(m_field);
 
     QObject::connect(this, &MainWindow::generate_board, m_field, &Field::generate_board);
+    QObject::connect(m_field, &Field::step_has_been_taken, this, &MainWindow::step_has_been_taken);
+    QObject::connect(m_field, &Field::win, this, &MainWindow::win);
     QObject::connect(ui->new_game_action, &QAction::triggered, this, &MainWindow::new_game_action_triggered);
+    QObject::connect(ui->quit_action, &QAction::triggered, this, &MainWindow::quit_action_triggered);
 }
 
 MainWindow::~MainWindow()
@@ -34,8 +42,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::new_game_action_triggered()
 {
-    // TODO если игра началась то уведомить
-
     QDialog d(this);
     if (d.layout()) delete d.layout();
     d.setWindowTitle(tr("Конфигурация поля"));
@@ -43,12 +49,12 @@ void MainWindow::new_game_action_triggered()
     QFormLayout *fl = new QFormLayout;
 
     QSpinBox *row_spin = new QSpinBox(&d);
-    row_spin->setRange(3, 100);
-    row_spin->setValue(m_field->board()->row_count());
+    row_spin->setRange(3, 32);
+    row_spin->setValue(m_field->board() ? m_field->board()->row_count() : 4);
 
     QSpinBox *col_spin = new QSpinBox(&d);
-    col_spin->setRange(3, 100);
-    col_spin->setValue(m_field->board()->column_count());
+    col_spin->setRange(3, 32);
+    col_spin->setValue(m_field->board() ? m_field->board()->column_count() : 4);
 
     fl->addRow(tr("Строки"), row_spin);
     fl->addRow(tr("Столбцы"), col_spin);
@@ -60,7 +66,22 @@ void MainWindow::new_game_action_triggered()
     hl->addWidget(ok);
 
     QVBoxLayout *vl = new QVBoxLayout;
+    QHBoxLayout *fhl = new QHBoxLayout;
+    QLineEdit *edit = new QLineEdit(&d);
+    QPushButton *btn = new QPushButton(tr("Выбрать"));
+
+    QObject::connect(btn, &QPushButton::clicked, [edit, &d]()
+    {
+        QString path = QFileDialog::getOpenFileName(&d, tr("Выбор файла"), Application::applicationDirPath(), "Изображения(*.bmp *.gif *.jpg *.jpeg *.png)");
+        edit->setText(path);
+    });
+
+    edit->setPlaceholderText(tr("Файл картинки"));
+    fhl->addWidget(edit);
+    fhl->addWidget(btn);
+
     vl->addLayout(fl);
+    vl->addLayout(fhl);
     vl->addLayout(hl);
 
     d.setLayout(vl);
@@ -71,6 +92,38 @@ void MainWindow::new_game_action_triggered()
     if (d.exec() == QDialog::Rejected)
         return;
 
-    emit generate_board(row_spin->value(), col_spin->value());
+    m_move_count = 0;
+
+    QString path = edit->text();
+    if (path.isEmpty())
+    {
+        path = ":/files/default.jpg";
+    }
+    else
+    {
+        if (!QFile::exists(path))
+        {
+            QMessageBox::warning(&d, tr("Ошибка"), tr("Файл отсутствует"));
+            return;
+        }
+    }
+
+    emit generate_board(row_spin->value(), col_spin->value(), QImage(path));
+}
+
+void MainWindow::quit_action_triggered()
+{
+    close();
+}
+
+void MainWindow::step_has_been_taken()
+{
+    ++m_move_count;
+}
+
+void MainWindow::win()
+{
+    QMessageBox::information(this, tr("Победа"), tr("Поздравляю! Сделано шагов: %1").arg(m_move_count));
+    m_move_count = 0;
 }
 

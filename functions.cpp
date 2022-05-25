@@ -30,7 +30,7 @@ QPointF pyatnashki::topleft(int r, int c, int side)
     return QPointF(side * c + MARGIN * c, side * r + MARGIN * r);
 }
 
-void pyatnashki::position(int &c, int &r, const int index, const int columns)
+void pyatnashki::position(int &r, int &c, const int index, const int columns)
 {
     r = (index % columns == 0) ? index / columns - 1 : index / columns;
     c = index - r * columns - 1;
@@ -39,6 +39,8 @@ void pyatnashki::position(int &c, int &r, const int index, const int columns)
 QList<QImage> pyatnashki::split(const QImage &img, const int rows, const int columns)
 {
     QList<QImage> list;
+    if (img.isNull())
+        return list;
 
     const int row_section = img.height() / rows;
     const int col_section = img.width() / columns;
@@ -49,7 +51,8 @@ QList<QImage> pyatnashki::split(const QImage &img, const int rows, const int col
         x_offset = 0;
         for (int j = 0; j < columns; ++j)
         {
-            QImage copy = img.copy(x_offset, y_offset, col_section, row_section);
+            QRect rect(x_offset, y_offset, col_section, row_section);
+            QImage copy = img.copy(rect);
             list.push_back(copy);
 
             x_offset += col_section;

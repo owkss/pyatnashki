@@ -13,6 +13,7 @@ public:
     enum { Type = UserType + 3 };
 
     DynamicCell(const QImage &img, const int r, const int c, int current_row, int current_col, Board *parent);
+    ~DynamicCell() override;
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

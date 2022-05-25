@@ -14,6 +14,11 @@ DynamicCell::DynamicCell(const QImage &img, const int r, const int c, int curren
     setZValue(2);
 }
 
+DynamicCell::~DynamicCell()
+{
+
+}
+
 QRectF DynamicCell::boundingRect() const
 {
     return QRectF(pyatnashki::topleft(current_row(), current_column(), section()), QSizeF(section(), section()));
@@ -22,7 +27,6 @@ QRectF DynamicCell::boundingRect() const
 void DynamicCell::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->save();
-    //painter->fillRect(boundingRect(), QColor(255, 0, 0, 50));
     painter->drawImage(boundingRect(), m_image);
     painter->restore();
 }

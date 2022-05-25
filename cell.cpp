@@ -15,6 +15,11 @@ Cell::Cell(const int r, const int c, Board *parent)
     setAcceptedMouseButtons(Qt::LeftButton);
 }
 
+Cell::~Cell()
+{
+
+}
+
 QRectF Cell::boundingRect() const
 {
     return QRectF(pyatnashki::topleft(index(), section(), board()->row_count(), board()->column_count()), QSizeF(section(), section()));
@@ -23,7 +28,7 @@ QRectF Cell::boundingRect() const
 void Cell::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->save();
-    painter->drawText(boundingRect(), Qt::AlignCenter, QString::number(index()));
+    //painter->drawText(boundingRect(), Qt::AlignCenter, QString::number(index()));
     painter->restore();
 }
 

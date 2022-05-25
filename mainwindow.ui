@@ -34,6 +34,8 @@
      <string>Игра</string>
     </property>
     <addaction name="new_game_action"/>
+    <addaction name="separator"/>
+    <addaction name="quit_action"/>
    </widget>
    <addaction name="game_menu"/>
   </widget>
@@ -41,6 +43,11 @@
   <action name="new_game_action">
    <property name="text">
     <string>Новая игра</string>
+   </property>
+  </action>
+  <action name="quit_action">
+   <property name="text">
+    <string>Выход</string>
    </property>
   </action>
  </widget>

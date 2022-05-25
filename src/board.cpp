@@ -107,7 +107,7 @@ void Board::generate(const QList<QImage> &images)
     std::mt19937 g(rd());
     std::vector<int> indexes(count() * count());
     std::iota(indexes.begin(), indexes.end(), 1);
-    //std::shuffle(indexes.begin(), indexes.end(), g);
+    std::shuffle(indexes.begin(), indexes.end(), g);
 
     int current_row = 0;
     int current_col = 0;

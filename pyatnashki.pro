@@ -18,25 +18,28 @@ CONFIG(release, debug|release){
     OBJECTS_DIR = debug/obj
 }
 
+INCLUDEPATH += \
+    inc/
+
 SOURCES += \
-    application.cpp \
-    board.cpp \
-    cell.cpp \
-    field.cpp \
-    functions.cpp \
-    main.cpp \
-    mainwindow.cpp
+    src/application.cpp \
+    src/board.cpp \
+    src/cell.cpp \
+    src/field.cpp \
+    src/functions.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp
 
 HEADERS += \
-    application.h \
-    board.h \
-    cell.h \
-    field.h \
-    functions.h \
-    mainwindow.h
+    inc/application.h \
+    inc/board.h \
+    inc/cell.h \
+    inc/field.h \
+    inc/functions.h \
+    inc/mainwindow.h
 
 FORMS += \
-    mainwindow.ui
+    ui/mainwindow.ui
 
 RESOURCES += \
     files.qrc

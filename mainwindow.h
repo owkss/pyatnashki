@@ -29,6 +29,6 @@ private:
     int m_move_count = 0;
 
 signals:
-    void generate_board(int r, int c, const QImage &img = QImage(":/files/default.jpg"));
+    void generate_board(int count, const QImage &img = QImage(":/files/default.jpg"));
 };
 #endif // MAINWINDOW_H

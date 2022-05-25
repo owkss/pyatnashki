@@ -48,16 +48,11 @@ void MainWindow::new_game_action_triggered()
     d.setMinimumSize(240, 120);
     QFormLayout *fl = new QFormLayout;
 
-    QSpinBox *row_spin = new QSpinBox(&d);
-    row_spin->setRange(3, 32);
-    row_spin->setValue(m_field->board() ? m_field->board()->row_count() : 4);
+    QSpinBox *count_spin = new QSpinBox(&d);
+    count_spin->setRange(3, 32);
+    count_spin->setValue(m_field->board() ? m_field->board()->count() : 4);
 
-    QSpinBox *col_spin = new QSpinBox(&d);
-    col_spin->setRange(3, 32);
-    col_spin->setValue(m_field->board() ? m_field->board()->column_count() : 4);
-
-    fl->addRow(tr("Строки"), row_spin);
-    fl->addRow(tr("Столбцы"), col_spin);
+    fl->addRow(tr("Размер"), count_spin);
 
     QHBoxLayout *hl = new QHBoxLayout;
     QPushButton *ok = new QPushButton(tr("Ок"), &d);
@@ -108,7 +103,7 @@ void MainWindow::new_game_action_triggered()
         }
     }
 
-    emit generate_board(row_spin->value(), col_spin->value(), QImage(path));
+    emit generate_board(count_spin->value(), QImage(path));
 }
 
 void MainWindow::quit_action_triggered()

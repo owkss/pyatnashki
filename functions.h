@@ -12,11 +12,10 @@ namespace pyatnashki
         MARGIN = 5
     };
 
-    QPointF topleft(int index, int side, const int rows, const int columns);
     QPointF topleft(int r, int c, int side);
-    void position(int &r, int &c, const int index, const int columns);
+    void position(int &r, int &c, const int index, const int count);
     int gcd(int a, int b);
-    QList<QImage> split(const QImage &img, const int rows, const int columns);
+    QList<QImage> split(const QImage &img, const int count);
 }
 
 #endif // FUNCTIONS_H

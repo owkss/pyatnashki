@@ -26,7 +26,7 @@ Field::~Field()
 
 }
 
-void Field::generate_board(int r, int c, const QImage &img)
+void Field::generate_board(int count, const QImage &img)
 {
     if (m_board)
     {
@@ -35,9 +35,9 @@ void Field::generate_board(int r, int c, const QImage &img)
         m_board = nullptr;
     }
 
-    QList<QImage> images = pyatnashki::split(img, r, c);
+    QList<QImage> images = pyatnashki::split(img, count);
 
-    m_board = new Board(images, r, c);
+    m_board = new Board(images, count);
     QObject::connect(m_board, &Board::win, this, &Field::win);
     QObject::connect(m_board, &Board::step_has_been_taken, this, &Field::step_has_been_taken);
     m_scene->addItem(m_board);

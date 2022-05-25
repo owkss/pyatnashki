@@ -22,7 +22,7 @@ Cell::~Cell()
 
 QRectF Cell::boundingRect() const
 {
-    return QRectF(pyatnashki::topleft(index(), section(), board()->row_count(), board()->column_count()), QSizeF(section(), section()));
+    return QRectF(pyatnashki::topleft(index(), section(), board()->count()), QSizeF(section(), section()));
 }
 
 void Cell::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
@@ -49,7 +49,7 @@ int Cell::column() const noexcept
 
 int Cell::index() const noexcept
 {
-    return row() * board()->column_count() + column() + 1;
+    return row() * board()->count() + column() + 1;
 }
 
 int Cell::section() const noexcept

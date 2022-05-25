@@ -5,17 +5,15 @@
 #include <QDebug>
 #include <QPointF>
 
-QPointF pyatnashki::topleft(int index, int side, const int rows, const int columns)
+QPointF pyatnashki::topleft(int r, int c, int side)
 {
-    if (index <= 0 || index > rows * columns)
-        return QPointF(0, 0);
-
-    int r = index / columns;
-    if (index % columns == 0)
-        r -= 1;
-    int c = index - r * columns - 1;
-
     return QPointF(side * c + MARGIN * c, side * r + MARGIN * r);
+}
+
+void pyatnashki::position(int &r, int &c, const int index, const int count)
+{
+    r = (index % count == 0) ? index / count - 1 : index / count;
+    c = index - r * count - 1;
 }
 
 int pyatnashki::gcd(int a, int b)
@@ -25,31 +23,20 @@ int pyatnashki::gcd(int a, int b)
     return gcd(b, a % b);
 }
 
-QPointF pyatnashki::topleft(int r, int c, int side)
-{
-    return QPointF(side * c + MARGIN * c, side * r + MARGIN * r);
-}
-
-void pyatnashki::position(int &r, int &c, const int index, const int columns)
-{
-    r = (index % columns == 0) ? index / columns - 1 : index / columns;
-    c = index - r * columns - 1;
-}
-
-QList<QImage> pyatnashki::split(const QImage &img, const int rows, const int columns)
+QList<QImage> pyatnashki::split(const QImage &img, const int count)
 {
     QList<QImage> list;
     if (img.isNull())
         return list;
 
-    const int row_section = img.height() / rows;
-    const int col_section = img.width() / columns;
+    const int row_section = img.height() / count;
+    const int col_section = img.width() / count;
     int x_offset = 0;
     int y_offset = 0;
-    for (int i = 0; i < rows; ++i)
+    for (int i = 0; i < count; ++i)
     {
         x_offset = 0;
-        for (int j = 0; j < columns; ++j)
+        for (int j = 0; j < count; ++j)
         {
             QRect rect(x_offset, y_offset, col_section, row_section);
             QImage copy = img.copy(rect);

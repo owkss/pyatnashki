@@ -43,7 +43,7 @@ int DynamicCell::current_column() const noexcept
 
 int DynamicCell::current_index() const noexcept
 {
-    return current_row() * board()->column_count() + current_column() + 1;
+    return current_row() * board()->count() + current_column() + 1;
 }
 
 void DynamicCell::mousePressEvent(QGraphicsSceneMouseEvent *event)

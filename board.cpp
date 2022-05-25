@@ -12,22 +12,20 @@
 #include <QMovie>
 #include <QPainter>
 
-Board::Board(const QList<QImage> &images, int r, int c, QGraphicsItem *parent)
+Board::Board(const QList<QImage> &images, int count, QGraphicsItem *parent)
     : QGraphicsObject(parent)
 {
     setFlags(QGraphicsItem::ItemSendsGeometryChanges);
 
-    if (r > 0)
-        m_rows = r;
-    if (c > 0)
-        m_columns = c;
+    if (count > 0)
+        m_count = count;
 
     generate(images);
 }
 
 QRectF Board::boundingRect() const
 {
-    return QRectF(0, 0, width(), height());
+    return QRectF(0, 0, side(), side());
 }
 
 void Board::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
@@ -45,24 +43,21 @@ void Board::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
         pen.setColor(Qt::black);
         painter->setPen(pen);
 
-        const int count = row_count() * row_count();
-        for(int i = 0; i < count; ++i)
+        for(int i = 0; i < count(); ++i)
         {
-            painter->drawRect(QRectF(pyatnashki::topleft(i + 1, section(), row_count(), row_count()), QSizeF(section(), section())));
+            for (int j = 0; j < count(); ++j)
+            {
+                painter->drawRect(QRectF(pyatnashki::topleft(i, j, section()), QSizeF(section(), section())));
+            }
         }
     }
 
     painter->restore();
 }
 
-int Board::width() const noexcept
+int Board::side() const noexcept
 {
-    return section() * column_count() + pyatnashki::MARGIN * column_count() - 1;
-}
-
-int Board::height() const noexcept
-{
-    return section() * row_count() + pyatnashki::MARGIN * row_count() - 1;
+    return section() * count() + pyatnashki::MARGIN * count() - 1;
 }
 
 int Board::section() const noexcept
@@ -74,8 +69,8 @@ void Board::recalc_size(const QSize &sz) noexcept
 {
     prepareGeometryChange();
 
-    const int w = sz.width() / column_count();
-    const int h = sz.height() / row_count();
+    const int w = sz.width() / count();
+    const int h = sz.height() / count();
     m_section = std::min(w, h) - pyatnashki::MARGIN;
 
     emit set_section(section());
@@ -101,12 +96,12 @@ void Board::cell_clicked(DynamicCell *dc)
 
 void Board::generate(const QList<QImage> &images)
 {
-    assert(images.size() == row_count() * column_count());
-    m_static_cells.resize(row_count() * column_count());
+    assert(images.size() == count() * count());
+    m_static_cells.resize(count() * count());
 
-    for (int i = 0; i < row_count(); ++i)
+    for (int i = 0; i < count(); ++i)
     {
-        for (int j = 0; j < column_count(); ++j)
+        for (int j = 0; j < count(); ++j)
         {
             Cell *c = new Cell(i, j, this);
             QObject::connect(this, &Board::set_section, c, &Cell::set_section);
@@ -116,20 +111,20 @@ void Board::generate(const QList<QImage> &images)
 
     std::random_device rd;
     std::mt19937 g(rd());
-    std::vector<int> indexes(row_count() * column_count());
+    std::vector<int> indexes(count() * count());
     std::iota(indexes.begin(), indexes.end(), 1);
-    std::shuffle(indexes.begin(), indexes.end(), g);
+    //std::shuffle(indexes.begin(), indexes.end(), g);
 
     int current_row = 0;
     int current_col = 0;
     for (size_t i = 0; i < indexes.size() - 1; ++i)
     {
         int index = indexes.at(i);
-        pyatnashki::position(current_row, current_col, index, column_count());
+        pyatnashki::position(current_row, current_col, index, count());
 
         int real_row = 0;
         int real_col = 0;
-        pyatnashki::position(real_row, real_col, static_cast<int>(i + 1), column_count());
+        pyatnashki::position(real_row, real_col, static_cast<int>(i + 1), count());
 
         DynamicCell *dc = new DynamicCell(images.at(i), real_row, real_col, current_row, current_col, this);
 
@@ -138,7 +133,7 @@ void Board::generate(const QList<QImage> &images)
         m_dynamic_cells.push_back(dc);
     }
 
-    pyatnashki::position(current_row, current_col, indexes.back(), column_count());
+    pyatnashki::position(current_row, current_col, indexes.back(), count());
     m_row_empty = current_row;
     m_column_empty = current_col;
 }

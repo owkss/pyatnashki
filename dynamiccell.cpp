@@ -5,10 +5,11 @@
 #include <QDebug>
 #include <QPainter>
 
-DynamicCell::DynamicCell(const int r, const int c, int current_row, int current_col, Board *parent)
+DynamicCell::DynamicCell(const QImage &img, const int r, const int c, int current_row, int current_col, Board *parent)
     : Cell(r, c, parent)
     , m_current_row(current_row)
     , m_current_col(current_col)
+    , m_image(img)
 {
     setZValue(2);
 }
@@ -21,7 +22,8 @@ QRectF DynamicCell::boundingRect() const
 void DynamicCell::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     painter->save();
-    painter->fillRect(boundingRect(), QColor(255, 0, 0, 50));
+    //painter->fillRect(boundingRect(), QColor(255, 0, 0, 50));
+    painter->drawImage(boundingRect(), m_image);
     painter->restore();
 }
 

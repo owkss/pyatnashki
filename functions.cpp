@@ -35,3 +35,28 @@ void pyatnashki::position(int &c, int &r, const int index, const int columns)
     r = (index % columns == 0) ? index / columns - 1 : index / columns;
     c = index - r * columns - 1;
 }
+
+QList<QImage> pyatnashki::split(const QImage &img, const int rows, const int columns)
+{
+    QList<QImage> list;
+
+    const int row_section = img.height() / rows;
+    const int col_section = img.width() / columns;
+    int x_offset = 0;
+    int y_offset = 0;
+    for (int i = 0; i < rows; ++i)
+    {
+        x_offset = 0;
+        for (int j = 0; j < columns; ++j)
+        {
+            QImage copy = img.copy(x_offset, y_offset, col_section, row_section);
+            list.push_back(copy);
+
+            x_offset += col_section;
+        }
+
+        y_offset += row_section;
+    }
+
+    return list;
+}

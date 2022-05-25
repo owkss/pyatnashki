@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_field = new Field(this);
     setCentralWidget(m_field);
 
-    QObject::connect(this, &MainWindow::set_dimension, m_field, &Field::generate_board);
+    QObject::connect(this, &MainWindow::generate_board, m_field, &Field::generate_board);
     QObject::connect(ui->new_game_action, &QAction::triggered, this, &MainWindow::new_game_action_triggered);
 }
 
@@ -71,6 +71,6 @@ void MainWindow::new_game_action_triggered()
     if (d.exec() == QDialog::Rejected)
         return;
 
-    emit set_dimension(row_spin->value(), col_spin->value());
+    emit generate_board(row_spin->value(), col_spin->value());
 }
 

@@ -6,6 +6,8 @@
 #include <QGraphicsView>
 
 class Board;
+class QImage;
+
 class Field : public QGraphicsView
 {
     Q_OBJECT
@@ -16,7 +18,7 @@ public:
     Board *board() const { return m_board; }
 
 public slots:
-    void generate_board(int r, int c);
+    void generate_board(int r, int c, const QImage &img);
 
 protected:
     void keyPressEvent(QKeyEvent *event) override;

@@ -3,14 +3,16 @@
 
 #include "cell.h"
 
+#include <QImage>
+
 class Board;
 class DynamicCell : public Cell
 {
     Q_OBJECT
 public:
-    enum { Type = UserType + 2 };
+    enum { Type = UserType + 3 };
 
-    DynamicCell(const int r, const int c, int current_row, int current_col, Board *parent);
+    DynamicCell(const QImage &img, const int r, const int c, int current_row, int current_col, Board *parent);
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -36,6 +38,8 @@ private:
 
     int m_current_row;
     int m_current_col;
+
+    QImage m_image;
 
 signals:
     void cell_clicked(DynamicCell *dc);

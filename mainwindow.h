@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 class Field;
+class QImage;
 namespace Ui { class MainWindow; }
 
 class MainWindow : public QMainWindow
@@ -23,6 +24,6 @@ private:
     Field *m_field = nullptr;
 
 signals:
-    void set_dimension(int r, int c);
+    void generate_board(int r, int c, const QImage &img = QImage(":/files/pic.jpg"));
 };
 #endif // MAINWINDOW_H

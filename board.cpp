@@ -11,7 +11,7 @@
 #include <QDebug>
 #include <QPainter>
 
-Board::Board(int r, int c, QGraphicsItem *parent)
+Board::Board(const QList<QImage> &images, int r, int c, QGraphicsItem *parent)
     : QGraphicsObject(parent)
 {
     setFlags(QGraphicsItem::ItemSendsGeometryChanges);
@@ -21,7 +21,7 @@ Board::Board(int r, int c, QGraphicsItem *parent)
     if (c > 0)
         m_columns = c;
 
-    generate();
+    generate(images);
 }
 
 QRectF Board::boundingRect() const
@@ -35,12 +35,13 @@ void Board::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
 
     QPen pen = painter->pen();
     pen.setWidth(pyatnashki::MARGIN / 2);
+    pen.setColor(Qt::black);
     painter->setPen(pen);
 
-    int count = m_rows * m_columns;
+    const int count = row_count() * row_count();
     for(int i = 0; i < count; ++i)
     {
-        painter->drawRect(QRectF(pyatnashki::topleft(i + 1, section(), row_count(), column_count()), QSizeF(section(), section())));
+        painter->drawRect(QRectF(pyatnashki::topleft(i + 1, section(), row_count(), row_count()), QSizeF(section(), section())));
     }
 
     painter->restore();
@@ -69,34 +70,28 @@ void Board::recalc_size(const QSize &sz) noexcept
     const int h = sz.height() / row_count();
     m_section = std::min(w, h) - pyatnashki::MARGIN;
 
-    QList<QGraphicsItem*> items = childItems();
-    for (int i = 0; i < items.size(); ++i)
-    {
-        if (Cell *c = qgraphicsitem_cast<Cell*>(items.at(i)))
-        {
-            c->set_section(section());
-        }
-    }
+    emit set_section(section());
 }
 
 void Board::cell_clicked(DynamicCell *dc)
 {
-    if (valid_move(dc->current_row(), dc->current_column()))
-    {
-        int r_tmp = dc->current_row();
-        int c_tmp = dc->current_column();
-        dc->set_new_position(m_row_empty, m_column_empty);
+    if (!valid_move(dc->current_row(), dc->current_column()))
+        return;
 
-        m_row_empty = r_tmp;
-        m_column_empty = c_tmp;
+    int r_tmp = dc->current_row();
+    int c_tmp = dc->current_column();
+    dc->set_new_position(m_row_empty, m_column_empty);
 
-        update();
-        check_win();
-    }
+    m_row_empty = r_tmp;
+    m_column_empty = c_tmp;
+
+    update();
+    check_win();
 }
 
-void Board::generate()
+void Board::generate(const QList<QImage> &images)
 {
+    assert(images.size() == row_count() * column_count());
     m_static_cells.resize(row_count() * column_count());
 
     for (int i = 0; i < row_count(); ++i)
@@ -104,6 +99,7 @@ void Board::generate()
         for (int j = 0; j < column_count(); ++j)
         {
             Cell *c = new Cell(i, j, this);
+            QObject::connect(this, &Board::set_section, c, &Cell::set_section);
             m_static_cells.push_back(c);
         }
     }
@@ -114,21 +110,26 @@ void Board::generate()
     std::iota(indexes.begin(), indexes.end(), 1);
     std::shuffle(indexes.begin(), indexes.end(), g);
 
-    int r = 0;
-    int c = 0;
+    int current_row = 0;
+    int current_col = 0;
     for (size_t i = 0; i < indexes.size() - 1; ++i)
     {
         int index = indexes.at(i);
-        pyatnashki::position(r, c, index, column_count());
+        pyatnashki::position(current_row, current_col, index, column_count());
 
-        DynamicCell *dc = new DynamicCell(0, 0, r, c, this);
-        connect(dc, &DynamicCell::cell_clicked, this, &Board::cell_clicked);
+        int real_row = 0;
+        int real_col = 0;
+        pyatnashki::position(real_row, real_col, static_cast<int>(i), column_count());
+
+        DynamicCell *dc = new DynamicCell(images.at(i), real_row, real_col, current_row, current_col, this);
+        QObject::connect(this, &Board::set_section, dc, &DynamicCell::set_section);
+        QObject::connect(dc, &DynamicCell::cell_clicked, this, &Board::cell_clicked);
         m_dynamic_cells.push_back(dc);
     }
 
-    pyatnashki::position(r, c, indexes.back(), column_count());
-    m_row_empty = r;
-    m_column_empty = c;
+    pyatnashki::position(current_row, current_col, indexes.back(), column_count());
+    m_row_empty = current_row;
+    m_column_empty = current_col;
 }
 
 bool Board::valid_move(int r, int c)

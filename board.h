@@ -4,6 +4,7 @@
 #include <QGraphicsObject>
 
 class Cell;
+class QImage;
 class DynamicCell;
 class Board : public QGraphicsObject
 {
@@ -11,7 +12,7 @@ class Board : public QGraphicsObject
 public:
     enum { Type = UserType + 1 };
 
-    Board(int r = 4, int c = 4, QGraphicsItem *parent = nullptr);
+    Board(const QList<QImage> &images, int r = 4, int c = 4, QGraphicsItem *parent = nullptr);
 
     QRectF boundingRect() const override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
@@ -33,7 +34,7 @@ private slots:
 private:
     friend class Field;
 
-    void generate();
+    void generate(const QList<QImage> &images);
     bool valid_move(int r, int c);
     void check_win();
 
@@ -49,6 +50,7 @@ private:
     int m_section = 480;
 
 signals:
+    void set_section(int s);
     void win();
 };
 

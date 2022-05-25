@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include <QDebug>
+#include <QImage>
 #include <QResizeEvent>
 
 Field::Field(QWidget *parent)
@@ -18,9 +19,6 @@ Field::Field(QWidget *parent)
 
     setCacheMode(QGraphicsView::CacheBackground);
     setOptimizationFlags(QGraphicsView::DontSavePainterState);
-
-    m_board = new Board;
-    m_scene->addItem(m_board);
 }
 
 Field::~Field()
@@ -28,12 +26,12 @@ Field::~Field()
 
 }
 
-void Field::generate_board(int r, int c)
+void Field::generate_board(int r, int c, const QImage &img)
 {
     m_scene->removeItem(m_board);
     delete m_board;
 
-    m_board = new Board(r, c);
+    m_board = new Board(pyatnashki::split(img, r, c), r, c);
     m_scene->addItem(m_board);
 
     configure_board_size();

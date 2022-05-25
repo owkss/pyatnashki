@@ -1,7 +1,9 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
-class QPointF;
+#include <QList>
+#include <QImage>
+#include <QPointF>
 
 namespace pyatnashki
 {
@@ -14,6 +16,7 @@ namespace pyatnashki
     QPointF topleft(int r, int c, int side);
     void position(int &c, int &r, const int index, const int columns);
     int gcd(int a, int b);
+    QList<QImage> split(const QImage &img, const int rows, const int columns);
 }
 
 #endif // FUNCTIONS_H

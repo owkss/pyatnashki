@@ -18,6 +18,7 @@
 #include <QPushButton>
 #include <QFileDialog>
 #include <QColorDialog>
+#include <QStandardPaths>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -70,7 +71,10 @@ void MainWindow::new_game_action_triggered()
 
     QObject::connect(btn, &QPushButton::clicked, [edit, &d]()
     {
-        QString path = QFileDialog::getOpenFileName(&d, tr("Выбор файла"), Application::applicationDirPath(), "Изображения(*.bmp *.gif *.jpg *.jpeg *.png)");
+        QStringList list = QStandardPaths::standardLocations(QStandardPaths::PicturesLocation);
+        QString std_path = list.empty() ? Application::applicationDirPath() : list.at(0);
+
+        QString path = QFileDialog::getOpenFileName(&d, tr("Выбор файла"), std_path, "Изображения(*.bmp *.gif *.jpg *.jpeg *.png)");
         edit->setText(path);
     });
 
